@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Heroku Django Starter Template
 
 An utterly fantastic project starter template for Django 1.11.
@@ -51,3 +52,6 @@ Just update `runtime.txt` to `python-2.7.13` (no trailing spaces or newlines!).
 - [Gunicorn](https://warehouse.python.org/project/gunicorn/)
 - [WhiteNoise](https://warehouse.python.org/project/whitenoise/)
 - [dj-database-url](https://warehouse.python.org/project/dj-database-url/)
+=======
+# NwdMesh
+>>>>>>> 1d945573578a037c8a4a47fe637f6ed60b49067b
