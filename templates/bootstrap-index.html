@@ -9,14 +9,19 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style type="text/css">
     
+    body {
+      background-color: black;
+      color: #C5C5C5;
+    }
+    
     .jumbotron {
-      background-color: #73192A; /* darkish red */
-      color: #000;
+      background-color: #360506; /* darkish red */
+      color: #C5C5C5;
       padding: 100px 25px;
     }
 
-    .bg-grey {
-      background-color: #f6f6f6;
+    .bg-red {
+      background-color: #360506;
     }
 
     .container-fluid {
@@ -34,21 +39,76 @@
       }
     }
 
-    .logo-small {
-      color: #4A1F30;
+    .logo-small-red {
+      color: #360506;
       font-size: 50px;
     }
 
-    .logo {
-      color: #4A1F30;
+    .logo-red {
+      color: #360506;
       font-size: 200px;
     }
 
-    
+    .logo-small-black {
+      color: #000;
+      font-size: 50px;
+    }
 
+    .logo-black {
+      color: #000;
+      font-size: 200px;
+    }
+    
+    .navbar {
+        margin-bottom: 0;
+        background-color: #360506;
+        z-index: 9999;
+        border: 0;
+        font-size: 12px !important;
+        line-height: 1.42857143 !important;
+        letter-spacing: 4px;
+        border-radius: 0;
+    }
+
+    .navbar li a, .navbar .navbar-brand {
+        color: #C5C5C5 !important;
+    }
+
+    .navbar-nav li a:hover, .navbar-nav li.active a {
+        color: #360506 !important;
+        background-color: #C5C5C5 !important;
+    }
+
+    .navbar-default .navbar-toggle {
+        border-color: transparent;
+        color: #C5C5C5 !important;
+    }
+    
   </style>
 </head>
 <body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#services">SERVICES</a></li>
+        <li><a href="#portfolio">PORTFOLIO</a></li>
+        <li><a href="#elements">ELEMENTS</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
 <div class="jumbotron text-center">
   <h1>Nine Worlds Deep</h1> 
@@ -72,15 +132,15 @@
       <button class="btn btn-default btn-lg">Get in Touch</button>
     </div>
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-signal logo"></span>
+      <span class="glyphicon glyphicon-signal logo-red"></span>
     </div>
   </div>
 </div>
 
-<div class="container-fluid bg-grey">
+<div class="container-fluid bg-red">
   <div class="row">
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-globe logo"></span> 
+      <span class="glyphicon glyphicon-globe logo-black"></span> 
     </div>
     <div class="col-sm-8">
       <h2>Our Values</h2>
@@ -96,17 +156,17 @@
   <br>
   <div class="row">
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-off"></span>
+      <span class="glyphicon glyphicon-off logo-small-red"></span>
       <h4>POWER</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-heart"></span>
+      <span class="glyphicon glyphicon-heart logo-small-red"></span>
       <h4>LOVE</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-lock"></span>
+      <span class="glyphicon glyphicon-lock logo-small-red"></span>
       <h4>JOB DONE</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
@@ -114,17 +174,17 @@
     <br><br>
   <div class="row">
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-leaf"></span>
+      <span class="glyphicon glyphicon-leaf logo-small-red"></span>
       <h4>GREEN</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-certificate"></span>
+      <span class="glyphicon glyphicon-certificate logo-small-red"></span>
       <h4>CERTIFIED</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
     <div class="col-sm-4">
-      <span class="glyphicon glyphicon-wrench"></span>
+      <span class="glyphicon glyphicon-wrench logo-small-red"></span>
       <h4>HARD WORK</h4>
       <p>Lorem ipsum dolor sit amet..</p>
     </div>
