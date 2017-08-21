@@ -29,6 +29,8 @@ DEBUG = False
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
+    'hive',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
