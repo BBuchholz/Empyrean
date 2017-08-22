@@ -20,11 +20,21 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
+"""
+changes to DEBUG and SECRET_KEY taken from:
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment#Getting_your_website_ready_to_publish
+
+"""
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "9u2*x1g@5b(%+beoqh+ebx$1c)%q$o8g6(4rsuupl%l*thq)$f"
+#SECRET_KEY = "9u2*x1g@5b(%+beoqh+ebx$1c)%q$o8g6(4rsuupl%l*thq)$f"
+import os
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '9u2*x1g@5b(%+beoqh+ebx$1c)%q$o8g6(4rsuupl%l*thq)$f')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 # Application definition
 
