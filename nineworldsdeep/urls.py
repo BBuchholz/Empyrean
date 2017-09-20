@@ -20,6 +20,8 @@ import core.views
 
 urlpatterns = [
 	#url(r'^$', core.views.index, name='index'), 
-	url(r'^$', TemplateView.as_view(template_name="bootstrap-index.html")),
+	#url(r'^$', TemplateView.as_view(template_name="bootstrap-index.html")),
+	url(r'^$', core.views.index, name='index'),
+	url(r'^sandbox/', TemplateView.as_view(template_name="bootstrap-index.html")),
     url(r'^admin/', admin.site.urls),
 ]
