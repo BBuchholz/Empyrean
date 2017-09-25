@@ -18,3 +18,10 @@ def index(request):
     	context={'num_frags':num_frags, 'num_docs':num_docs},
     )
 
+from django.views import generic
+
+class DocumentListView(generic.ListView):
+    model = Document
+
+class DocumentDetailView(generic.DetailView):
+    model = Document
