@@ -22,6 +22,7 @@ from django.views import generic
 
 class DocumentListView(generic.ListView):
     model = Document
+    paginate_by = 2 #low for testing, increase for production
 
 class DocumentDetailView(generic.DetailView):
     model = Document
