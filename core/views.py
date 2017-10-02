@@ -11,11 +11,19 @@ def index(request):
     num_frags = Fragment.objects.all().count()
     num_docs = Document.objects.all().count()
 
+    # number of visits to this view, as counted in the session variable
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
     # render
     return render(
     	request,
     	'index.html',
-    	context={'num_frags':num_frags, 'num_docs':num_docs},
+    	context = {
+            'num_frags':num_frags, 
+            'num_docs':num_docs, 
+            'num_visits': num_visits,
+        },
     )
 
 from django.views import generic
