@@ -96,6 +96,10 @@ body {
     background-color: #3f1011;
 }
 
+.carousel-caption {
+    position: static;
+}
+
 .item h4 {
     font-size: 19px;
     line-height: 1.375em;
@@ -112,4 +116,11 @@ footer .glyphicon {
     font-size: 20px;
     margin-bottom: 20px;
     color: #3f1011;
+}
+
+.nwd-fixed-width-centered-text {
+  display: table;
+  vertical-align: middle;
+  margin: 40px;
+  padding: 100px;
 }
