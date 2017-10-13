@@ -24,7 +24,8 @@ body {
 }
 
 .container-fluid {
-  padding: 60px 50px;
+  /*padding: 60px 50px;*/
+  padding: 6vh 5vw;
 }
 
 .logo {
@@ -105,7 +106,7 @@ body {
     line-height: 1.375em;
     font-weight: 400;
     font-style: italic;
-    margin: 70px 0;
+    /*margin: 70px 0;*/
 }
 
 .item span {
@@ -121,6 +122,6 @@ footer .glyphicon {
 .nwd-fixed-width-centered-text {
   display: table;
   vertical-align: middle;
-  margin: 10vw;
+  margin: 5vw;
   padding: 0vw;
 }
