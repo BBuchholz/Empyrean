@@ -121,6 +121,6 @@ footer .glyphicon {
 .nwd-fixed-width-centered-text {
   display: table;
   vertical-align: middle;
-  margin: 40px;
-  padding: 100px;
+  margin: 10vw;
+  padding: 0vw;
 }
