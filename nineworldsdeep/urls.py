@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^$', core.views.index, name='index'),
     url(r'^sandbox/', TemplateView.as_view(template_name="bootstrap-index.html")),
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^documents/$', core.views.DocumentListView.as_view(), name='documents'),
     url(r'^documents/(?P<pk>\d+)$', core.views.DocumentDetailView.as_view(), name='document-detail'),
 ]
