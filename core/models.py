@@ -45,4 +45,3 @@ class Quote(models.Model):
             return public_accessible
         else:
             return False
-

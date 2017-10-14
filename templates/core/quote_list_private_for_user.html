@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Added quotes</h1>
+
+    {% if quote_list %}
+    <ul>
+
+      {% for quote in quote_list %} 
+      <li>
+        {% if not quote.public_accessible %} (private) {% endif %} <br/> 
+        {{quote.text}}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no private quotes.</p>
+    {% endif %}       
+{% endblock %}

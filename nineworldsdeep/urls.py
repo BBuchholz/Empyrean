@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^documents/$', core.views.DocumentListView.as_view(), name='documents'),
     url(r'^documents/(?P<pk>\d+)$', core.views.DocumentDetailView.as_view(), name='document-detail'),
+    url(r'^quotes/$', core.views.QuoteListView.as_view(), name='quotes'), 
+    url(r'^myquotes/$', core.views.QuotesPrivateForUserListView.as_view(), name='my-quotes'),
 ]

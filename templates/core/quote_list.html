@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>quote List</h1>
+
+    {% if quote_list %}
+    <ul>
+
+      {% for quote in quote_list %}
+
+        {% if quote.public_accessible %}
+            <li>
+                <a href="{{ quote.get_absolute_url }}">{{ quote.text }}</a> (public)
+            </li>
+        {% endif %}
+
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no quotes in nwd.</p>
+    {% endif %}       
+{% endblock %}

@@ -20,17 +20,17 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span> 
       </button>
-      <a class="navbar-brand" href="#">NWD</a>
+      <a class="navbar-brand" href="{% url 'index' %}">NWD</a>
       <!-- {% load static %}
       <a class="navbar-brand" href="#"><img class="img-responsive" src="{% static "nwd-tree-logo-nameplate.png" %}"></a>       -->
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#about">ABOUT</a></li>
-        <li><a href="#elements">ELEMENTS</a></li>
-        <li><a href="#contact">CONTACT</a></li>
-        <li><a href="{% url 'documents' %}">DOCUMENTS</a></li>
+          <li><a href="#fragmentsLinkHere">FRAGMENTS</a></li>
+          <li><a href="{% url 'quotes' %}">QUOTES</a></li>
+          <li><a href="{% url 'documents' %}">DOCUMENTS</a></li>
         {% if user.is_authenticated %}
+          <li><a href="{% url 'my-quotes' %}">MY QUOTES</a></li>
           <li><a href="#profileLinkHere">USER {{ user.get_username }}</a></li>
           <li><a href="{% url 'logout' %}?next={{request.path}}">LOG OUT</a></li>
         {% else %}
