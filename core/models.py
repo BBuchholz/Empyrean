@@ -37,6 +37,10 @@ class Quote(models.Model):
     public_accessible = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('quote-detail', args=[str(self.id)])
+
     @property
     def is_public(self):
         #just an adaptation of a basic example from the tutorial

@@ -28,5 +28,9 @@ urlpatterns = [
     url(r'^documents/$', core.views.DocumentListView.as_view(), name='documents'),
     url(r'^documents/(?P<pk>\d+)$', core.views.DocumentDetailView.as_view(), name='document-detail'),
     url(r'^quotes/$', core.views.QuoteListView.as_view(), name='quotes'), 
+    url(r'^quotes/(?P<pk>\d+)$', core.views.QuoteDetailView.as_view(), name='quote-detail'), #need to check ownership permissions, etc.
+    url(r'^quotes/create/$', core.views.QuoteCreate.as_view(), name='quote-create'),
+    url(r'^quotes/(?P<pk>\d+)/update/$', core.views.QuoteUpdate.as_view(), name='quote-update'),
+    url(r'^quotes/(?P<pk>\d+)/delete/$', core.views.QuoteDelete.as_view(), name='quote-delete'),
     url(r'^myquotes/$', core.views.QuotesPrivateForUserListView.as_view(), name='my-quotes'),
 ]

@@ -1,22 +1,11 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Name: {{ document.title }}</h1>
+  <h1>Owner: {{ quote.title }}</h1>
 
-  <p><strong>Link:</strong> {{ document.link }}</p>
-  <p><strong>CreatedAt:</strong> {{ document.created_at }}</p> 
-  <p><strong>UpdatedAt:</strong> {{ document.updated_at }}</p>  
+  <p><strong>Text:</strong> {{ quote.text }}</p>
+  <p><strong>CreatedAt:</strong> {{ quote.created_at }}</p> 
+  <p><strong>UpdatedAt:</strong> {{ quote.updated_at }}</p>  
 
-  <div style="margin-left:20px;margin-top:20px">
-    <h4>Fragments</h4>
-
-    {% for fragment in document.fragment_set.all %}
-    <hr>
-    <p><strong>Text: </strong> {{ fragment.text }}</p>
-    <p><strong>CreatedAt: </strong> {{ fragment.created_at }}</p>
-    <p><strong>UpdatedAt: </strong> {{ fragment.updated_at }}</p>
-
-    {% endfor %}
-  </div>
 
 {% endblock %}

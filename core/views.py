@@ -1,7 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import Fragment, Document, Quote
 from django.contrib.auth.models import User
+
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.urlresolvers import reverse
+from django.views import generic
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 def index(request):
     #return HttpResponse("Nine Worlds Deep")
@@ -31,7 +40,6 @@ def index(request):
         },
     )
 
-from django.views import generic
 
 class DocumentListView(generic.ListView):
     model = Document
@@ -43,11 +51,12 @@ class DocumentDetailView(generic.DetailView):
 class QuoteListView(generic.ListView):
     model = Quote
 
-class QuoteDetailView(generic.DetailView):
+class QuoteDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
     model = Quote
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
+    def test_func(self):
+        """ Only let the user access this page if they own the quote being updated"""
+        return self.get_object().public_accessible or self.get_object().owner == self.request.user 
 
 class QuotesPrivateForUserListView(LoginRequiredMixin, generic.ListView):
     """
@@ -59,3 +68,30 @@ class QuotesPrivateForUserListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Quote.objects.filter(owner=self.request.user).filter(public_accessible=False).order_by('created_at')
+
+
+class QuoteCreate(CreateView):
+    model = Quote
+    fields = ['text', 'public_accessible',]
+
+    def form_valid(self, form):
+        quote = form.save(commit=False)
+        quote.owner = self.request.user
+        quote.save()
+        return HttpResponseRedirect(reverse("quote-detail", args=(quote.id,)))
+
+class QuoteUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Quote
+    fields = ['text', 'public_accessible',]
+
+    def test_func(self):
+        """ Only let the user access this page if they own the quote being updated"""
+        return self.get_object().owner == self.request.user
+
+class QuoteDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Quote
+    success_url = reverse_lazy('quotes')        
+
+    def test_func(self):
+        """ Only let the user access this page if they own the object being deleted"""
+        return self.get_object().owner == self.request.user
