@@ -35,7 +35,7 @@ class Quote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     public_accessible = models.BooleanField(default=False)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def get_absolute_url(self):
         from django.urls import reverse
@@ -49,3 +49,9 @@ class Quote(models.Model):
             return public_accessible
         else:
             return False
+
+class QuoteAccessLogEntry(models.Model):
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    last_accessed = models.DateTimeField(auto_now=True)
+    
