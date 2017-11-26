@@ -50,8 +50,8 @@ class Quote(models.Model):
         else:
             return False
 
-# class QuoteAccessLogEntry(models.Model):
-#     quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     last_accessed = models.DateTimeField(auto_now=True)
+class QuoteAccessLogEntry(models.Model):
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    last_accessed = models.DateTimeField(auto_now=True)
     
