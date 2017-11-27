@@ -82,51 +82,55 @@
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    <li data-target="#myCarousel" data-slide-to="2"></li>
+
+    {% if quote_list %}
+
+      {% for quote in quote_list %}
+
+        {% if forloop.counter0 > 0 %}
+
+          <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}"></li>
+
+        {% endif %}
+
+      {% endfor %}
+
+    {% endif %}
+
   </ol>
 
   <!-- Wrapper for slides -->
   <div class="carousel-inner container-fluid" role="listbox">
 
-    <div class="item active nwd-fixed-width-centered-text">
 
-      
+    {% if quote_list %}
+    
+      {% for quote in quote_list %} 
+    
+        {% if forloop.first %}
+          
+          <div class="item active nwd-fixed-width-centered-text">      
 
-      <h4>
-        “The most merciful thing in the world, I think, is the inability of the human mind to correlate all its contents. We live on a placid island of ignorance in the midst of black seas of infinity, and it was not meant that we should voyage far. The sciences, each straining in its own direction, have hitherto harmed us little; but some day the piecing together of dissociated knowledge will open up such terrifying vistas of reality, and of our frightful position therein, that we shall either go mad from the revelation or flee from the light into the peace and safety of a new dark age.”<br>
-          <span style="font-style:normal;">H.P. Lovecraft</span>
-      </h4>
+        {% else %}
 
-      
+          <div class="item nwd-fixed-width-centered-text">
 
-    </div>
+        {% endif %}
 
-    <div class="item nwd-fixed-width-centered-text">
+            <h4>
+              {{quote.text}}<br>          
+            </h4>      
 
-      
-      
-      <h4>
-        "Inevitably anyone with an independent mind must become 'one who resists or opposes authority or established conventions': a rebel. If enough people come to agree with, and follow, the Rebel, we now have a Devil. Until, of course, still more people agree. And then, finally, we have --- Greatness."<br>
-          <span style="font-style:normal;">Aleister Crowley</span>
-      </h4>
+          </div>
+    
+      {% endfor %}
+    
 
-      
+    {% else %}
 
-    </div> 
-
-    <div class="item nwd-fixed-width-centered-text">
-
-      
-
-      <h4>
-        “Atavistic resurgence, a primal urge towards union with the Divine by returning to the common source of all, is indicated by the backward symbolism peculiar to all Sabbath ceremonies, as also of many ideas connected with witchcraft, sorcery and magic. Whether it be the symbol of the moon presiding over nocturnal ecstasies; the words of power chanted backwards; the back-to-back dance performed in opposition to the sun's course; the devil's tail - are all instances of reversal and symbolic of Will and Desire turning within and down to subconscious regions, to the remote past, there to surprise the required atavistic energy for purposes of transformation, healing, initiation, construction or destruction.” <br>
-          <span style="font-style:normal;">Kenneth Grant, Hidden Lore: Hermetic Glyphs</span>
-      </h4>
-
-      
-
-    </div>
+      <p>There are no quotes in the database.</p>
+    
+    {% endif %}     
 
   </div>
 
