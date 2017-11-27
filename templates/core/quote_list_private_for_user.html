@@ -3,13 +3,16 @@
 {% block content %}
     <h1>Added quotes</h1>
 
+    <p><a href="{% url 'quote-create' %}">Add Quote</a></p>
+
     {% if quote_list %}
     <ul>
 
       {% for quote in quote_list %} 
       <li>
-        {% if not quote.public_accessible %} (private) {% endif %} <br/> 
-        {{quote.text}}
+        [Owner: {% if quote.owner %} {{quote.owner}} {% else %} Anonymous {% endif %}]
+        {% if not quote.public_accessible %} (private) {% endif %} <br/> <br/>
+        {{quote.text}} <br/> <br/>
       </li>
       {% endfor %}
     </ul>
