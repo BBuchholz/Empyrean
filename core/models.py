@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 # Create your models here.
 class Fragment(models.Model):
@@ -34,6 +35,7 @@ class Quote(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_accessed = models.DateTimeField(default=datetime.now)
     public_accessible = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
@@ -50,8 +52,4 @@ class Quote(models.Model):
         else:
             return False
 
-class QuoteAccessLogEntry(models.Model):
-    quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    last_accessed = models.DateTimeField(auto_now=True)
     

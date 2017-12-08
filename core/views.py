@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Fragment, Document, Quote, QuoteAccessLogEntry
+# from .models import Fragment, Document, Quote, QuoteAccessLogEntry
+from .models import Fragment, Document, Quote
 from django.contrib.auth.models import User
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -29,29 +30,7 @@ def index(request):
     # number of visits to this view, as counted in the session variable
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
-
-    """
-    TODO: need to retrieve randomized quotes here, including private if user is logged in
-
-    Let X be the number of quotes retrieved (using 5 for testing, change to like 10 or more later)
-    Let Y be the number of quotes to randomize from the retrieved (using 3 for testing, change to 5 or more later)
-
-    To do this we will:
-
-        if anonymous user:
-
-            just grab X publicly accessible quotes, select from most recent by id
-
-        else if logged in user:
-
-            grab X quotes, select where public_accessible is true or owner is logged in user ordered by lasted accessed
-
-
-
-        for both: take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
-
-    """
-
+ 
     # populate with these quotes if none exist
     if num_quotes < 1:
         #for testing
@@ -69,30 +48,21 @@ def index(request):
     if request.user.is_authenticated:
 
         # grab X quotes, select where public_accessible is true or owner is logged in user
-        quote_queryset = Quote.objects.filter(Q(owner=request.user)|Q(public_accessible=True)).order_by("quoteaccesslogentry__last_accessed")[:num_quotes_to_retrieve]
+        quote_queryset = Quote.objects.filter(Q(owner=request.user)|Q(public_accessible=True)).order_by("last_accessed")[:num_quotes_to_retrieve]
         pass
 
     else:
 
         # grab X publicly accessible quotes, select from most recent by id
-        quote_queryset = Quote.objects.filter(public_accessible=True).order_by("-updated_at")[:num_quotes_to_retrieve]
+        quote_queryset = Quote.objects.filter(public_accessible=True).order_by("last_accessed")[:num_quotes_to_retrieve]
 
     #take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
     quote_list = random.sample(list(quote_queryset), num_quotes_to_randomize)
 
-    if request.user.is_authenticated:
-        for quote in quote_list:
 
-            try:
-                quote_access_log_entry = Quote.objects.get(quoteaccesslogentry__quote = quote)
-            except:
-                quote_access_log_entry = None
-
-            if quote_access_log_entry:
-                quote_access_log_entry.last_accessed = datetime.now()
-            else:
-                log_entry = QuoteAccessLogEntry(user = request.user, quote = quote, last_accessed = datetime.now())
-                log_entry.save()
+    for quote in quote_list:
+        quote.last_accessed = datetime.now()
+        quote.save()
 
 
     # render
