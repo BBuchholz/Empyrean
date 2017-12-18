@@ -117,7 +117,8 @@ class QuoteCreate(CreateView):
         quote = form.save(commit=False)
         quote.owner = self.request.user
         quote.save()
-        return HttpResponseRedirect(reverse("quote-detail", args=(quote.id,)))
+        # return HttpResponseRedirect(reverse("quote-detail", args=(quote.id,)))
+        return HttpResponseRedirect(reverse("my-quotes"))
 
 class QuoteUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Quote
