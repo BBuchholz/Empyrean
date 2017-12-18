@@ -106,7 +106,7 @@ class QuotesPrivateForUserListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        return Quote.objects.filter(Q(owner=self.request.user)|Q(public_accessible=True)).order_by('created_at')
+        return Quote.objects.filter(Q(owner=self.request.user)|Q(public_accessible=True)).order_by('-created_at')
 
 
 class QuoteCreate(CreateView):
