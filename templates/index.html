@@ -18,4 +18,10 @@ You have visited this page {{ num_visits }}
 	{% if num_visits == 1 %}time {% else %}times {% endif %}.
 </p>
 
+{% if user.is_authenticated %}
+
+<p><a href="{% url 'quote-create' %}">Add Quote</a></p>
+
+{% endif %}
+
 {% endblock %}
