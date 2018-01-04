@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 # from .models import Fragment, Document, Quote, QuoteAccessLogEntry
 from .models import Fragment, Document, Quote
+from .forms import QuoteForm
 from django.contrib.auth.models import User
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -14,6 +15,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 import random
 from datetime import datetime
+
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -42,8 +45,8 @@ def index(request):
         q.save()
     
     #these numbers are for testing, increase when working
-    num_quotes_to_retrieve = 5
-    num_quotes_to_randomize = 3
+    num_quotes_to_retrieve = 10
+    num_quotes_to_randomize = 5
 
     if request.user.is_authenticated:
 
@@ -79,6 +82,31 @@ def index(request):
         },
     )
 
+# @login_required
+# def quote_entry(request):
+#     #if its a post request, process the data
+#     if(request.method == 'POST'):
+        
+#         #create form instance and populate with data from the request
+#         form = QuoteForm(request.POST)
+
+#         #check form validity
+#         if form.is_valid():
+#             #proces the data in form.cleaned_data
+#             quote = Quote()
+#             quote.text = form.cleaned_data['quote_text']
+#             quote.public_accessible = form.cleaned_data['public_accessible']
+#             quote.owner = request.user
+#             quote.save()
+
+#             return HttpResponseRedirect(reverse('my-quotes'))
+
+#     #if this is a GET (or any other method) create the default form
+#     else:
+
+#         form = QuoteForm()
+
+#     return render(request, 'core/')
 
 class DocumentListView(generic.ListView):
     model = Document
@@ -111,7 +139,7 @@ class QuotesPrivateForUserListView(LoginRequiredMixin, generic.ListView):
 
 class QuoteCreate(CreateView):
     model = Quote
-    fields = ['text', 'public_accessible',]
+    form_class = QuoteForm
 
     def form_valid(self, form):
         quote = form.save(commit=False)

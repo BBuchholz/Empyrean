@@ -13,6 +13,16 @@ body {
   color: darkslategray;
 }
 
+.btn-red, .btn-red:focus, .btn-red:hover {
+  background-color: #3f1011;
+  color: #C5C5C5; 
+}
+
+.btn-red:active {
+  background-color: #darkslategray;
+  color: black;
+}
+
 .jumbotron {
   background-color: #3f1011; /* our red tone */
   color: #C5C5C5;
@@ -124,4 +134,8 @@ footer .glyphicon {
   vertical-align: middle;
   margin: 5vw;
   padding: 0vw;
+}
+
+form {
+  margin: 20px;
 }
