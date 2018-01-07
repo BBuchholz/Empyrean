@@ -102,8 +102,8 @@ class SourceExcerpt(models.Model):
 class SourceExcerptTagging(models.Model):
     excerpt = models.ForeignKey(SourceExcerpt, on_delete=models.CASCADE)
     tag = models.ForeignKey(MediaTag, on_delete=models.CASCADE)
-    tagged_at = models.DateTimeField()
-    untagged_at = models.DateTimeField()
+    tagged_at = models.DateTimeField(null=True, blank=True)
+    untagged_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -133,8 +133,8 @@ class Quote(models.Model):
 class QuoteTagging(models.Model):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
     tag = models.ForeignKey(MediaTag, on_delete=models.CASCADE)
-    tagged_at = models.DateTimeField()
-    untagged_at = models.DateTimeField()
+    tagged_at = models.DateTimeField(null=True, blank=True)
+    untagged_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
