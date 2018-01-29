@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 # from .models import Fragment, Document, Quote, QuoteAccessLogEntry
-from .models import Fragment, Document, Quote
+from .models import Fragment, Document, Quote, SourceType, Source, MediaTag
 from .forms import QuoteForm
 from django.contrib.auth.models import User
 
@@ -44,6 +44,25 @@ def index(request):
         q = Quote(text="\"Atavistic resurgence, a primal urge towards union with the Divine by returning to the common source of all, is indicated by the backward symbolism peculiar to all Sabbath ceremonies, as also of many ideas connected with witchcraft, sorcery and magic. Whether it be the symbol of the moon presiding over nocturnal ecstasies; the words of power chanted backwards; the back-to-back dance performed in opposition to the sun's course; the devil's tail - are all instances of reversal and symbolic of Will and Desire turning within and down to subconscious regions, to the remote past, there to surprise the required atavistic energy for purposes of transformation, healing, initiation, construction or destruction.\" -- Kenneth Grant, Hidden Lore: Hermetic Glyphs", public_accessible=True)
         q.save()
     
+    #ensure the existence of default source and tag
+    source_type, created = SourceType.objects.get_or_create(
+        name='UNSPECIFIED',
+    )
+
+    Source.objects.get_or_create(
+        source_type=source_type,
+        author='UNSPECIFIED SOURCE',
+    )
+
+    MediaTag.objects.get_or_create(
+        tag='needs tagging',
+    )
+
+    MediaTag.objects.get_or_create(
+        tag='empyrean entered',
+    )
+
+
     #these numbers are for testing, increase when working
     num_quotes_to_retrieve = 10
     num_quotes_to_randomize = 5
@@ -145,6 +164,13 @@ class QuoteCreate(CreateView):
         quote = form.save(commit=False)
         quote.owner = self.request.user
         quote.save()
+        
+        #current implementation will not work using save_m2m() 
+        #because of the intermediary model (google it)
+        #saving this for later, because we may be onto something ->
+        #try combining this solution: https://stackoverflow.com/a/10249376/670768
+        #and this solution: https://stackoverflow.com/a/2264722/670768
+
         # return HttpResponseRedirect(reverse("quote-detail", args=(quote.id,)))
         return HttpResponseRedirect(reverse("my-quotes"))
 

@@ -45,29 +45,29 @@ class SourceType(models.Model):
 
 class Source(models.Model):    
     source_type = models.ForeignKey(SourceType, on_delete=models.PROTECT)
-    author = models.TextField()
-    director = models.TextField()
-    title = models.TextField()
-    year = models.TextField()
-    url = models.TextField()
-    retrieval_date = models.TextField()
-    source_tag= models.TextField()
+    author = models.TextField(blank=True)
+    director = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    year = models.TextField(blank=True)
+    url = models.TextField(blank=True)
+    retrieval_date = models.TextField(blank=True)
+    source_tag= models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):        
-        if title:
-            return title
-        elif author:
-            return author
-        elif director:
-            return director
-        elif year:
-            return year
-        elif url:
-            return url
+        if self.title:
+            return self.title
+        elif self.author:
+            return self.author
+        elif self.director:
+            return self.director
+        elif self.year:
+            return self.year
+        elif self.url:
+            return self.url
         else:
-            return "undefined source"
+            return "error displaying source"
 
     class Meta:
         ordering = ("title", "author", "director", "year", "url",)
@@ -86,9 +86,9 @@ class MediaTag(models.Model):
 class SourceExcerpt(models.Model):
     source = models.ForeignKey(Source, on_delete=models.PROTECT)
     content = models.TextField()
-    pages = models.TextField()
-    begin_time = models.TextField()
-    end_time = models.TextField()
+    pages = models.TextField(blank=True)
+    begin_time = models.TextField(blank=True)
+    end_time = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(MediaTag, through='SourceExcerptTagging')
