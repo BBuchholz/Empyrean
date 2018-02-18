@@ -27,7 +27,7 @@ admin.site.register(SourceType)
 # register admin classes for Quote with the decorator
 @admin.register(Quote) 
 class QuoteAdmin(admin.ModelAdmin):
-    list_display = ('text', 'owner', 'public_accessible', 'source', 'tags')
+    list_display = ('text', 'owner', 'public_accessible', 'source')
 
 
 
