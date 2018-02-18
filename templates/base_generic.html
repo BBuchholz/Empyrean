@@ -81,9 +81,9 @@
   <ol class="carousel-indicators">
     <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
 
-    {% if quote_list %}
+    {% if quote_list_simple %}
 
-      {% for quote in quote_list %}
+      {% for quote in quote_list_simple %}
 
         {% if forloop.counter0 > 0 %}
 
@@ -101,9 +101,9 @@
   <div class="carousel-inner container-fluid" role="listbox">
 
 
-    {% if quote_list %}
+    {% if quote_list_simple %}
     
-      {% for quote in quote_list %} 
+      {% for quote_text, quote_source, quote_tag_string in quote_list_simple %} 
     
         {% if forloop.first %}
           
@@ -116,8 +116,14 @@
         {% endif %}
 
             <h4>
-              {{quote.text}}<br>          
+              {{quote_text}}<br>          
             </h4>      
+            <h5>
+              {{quote_source}}<br>
+            </h5>
+            <h6>
+              {{quote_tag_string}}<br>
+            </h6>
 
           </div>
     

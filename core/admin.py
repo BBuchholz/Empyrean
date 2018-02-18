@@ -17,7 +17,7 @@ admin.site.register(Fragment)
 admin.site.register(Document)
 #admin.site.register(Quote) #registered below 
 admin.site.register(MediaTag)
-admin.site.register(QuoteTagging)
+#admin.site.register(QuoteTagging)
 admin.site.register(Source)
 admin.site.register(SourceExcerpt)
 admin.site.register(SourceExcerptTagging)
@@ -29,7 +29,9 @@ admin.site.register(SourceType)
 class QuoteAdmin(admin.ModelAdmin):
     list_display = ('text', 'owner', 'public_accessible', 'source')
 
-
+@admin.register(QuoteTagging)
+class QuoteTaggingAdmin(admin.ModelAdmin):
+    list_display = ('quote', 'tag')
 
 
 

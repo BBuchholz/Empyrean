@@ -121,6 +121,9 @@ class Quote(models.Model):
         from django.urls import reverse
         return reverse('quote-detail', args=[str(self.id)])
 
+    def __str__(self):
+        return self.text
+
     @property
     def is_public(self):
         #just an adaptation of a basic example from the tutorial

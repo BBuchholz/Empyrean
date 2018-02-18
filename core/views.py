@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 # from .models import Fragment, Document, Quote, QuoteAccessLogEntry
-from .models import Fragment, Document, Quote, SourceType, Source, MediaTag
+from .models import Fragment, Document, Quote, SourceType, Source, MediaTag, QuoteTagging
 from .forms import QuoteForm
 from django.contrib.auth.models import User
 
@@ -54,12 +54,12 @@ def index(request):
         author='UNSPECIFIED SOURCE',
     )
 
-    MediaTag.objects.get_or_create(
+    media_tag_needs_tagging, created = MediaTag.objects.get_or_create(
         tag='needs tagging',
     )
 
-    MediaTag.objects.get_or_create(
-        tag='empyrean entered',
+    media_tag_empyrean_system_tagged, created = MediaTag.objects.get_or_create(
+        tag='empyrean system tagged',
     )
 
 
@@ -78,13 +78,39 @@ def index(request):
         # grab X publicly accessible quotes, select from most recent by id
         quote_queryset = Quote.objects.filter(public_accessible=True).order_by("last_accessed")[:num_quotes_to_retrieve]
 
-    #take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
+    # take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
     quote_list = random.sample(list(quote_queryset), num_quotes_to_randomize)
+
+    # just passing a list of what we need from each object, instead of the whole object to the template
+    quote_list_simple = []
 
 
     for quote in quote_list:
         quote.last_accessed = datetime.now()
         quote.save()
+        quote_text = quote.text
+        
+        if quote.source:
+            quote_source_text = str(quote.source)
+        else:
+            quote_source_text = "[no source found]"
+       
+        quote_tags_values_list = quote.tags.values_list('tag', flat=True)
+
+        if len(quote_tags_values_list) < 1:
+            quote_tagging = QuoteTagging(quote=quote, tag=media_tag_needs_tagging, tagged_at=datetime.now())
+            quote_tagging.save()
+            quote_tagging = QuoteTagging(quote=quote, tag=media_tag_empyrean_system_tagged, tagged_at=datetime.now())
+            quote_tagging.save()
+            quote_tags_values_list = quote.tags.values_list('tag', flat=True)
+
+        if len(quote_tags_values_list) > 0:
+            quote_tag_string = ", ".join(quote_tags_values_list)
+        else:
+            quote_tag_string = ", ".join('tags', 'not', 'found', 'here',)
+
+        quote_list_simple.append((quote_text, quote_source_text, quote_tag_string))
+        
 
 
     # render
@@ -97,7 +123,7 @@ def index(request):
             'num_quotes':num_quotes,
             'num_visits': num_visits,
             'num_users':num_users,
-            'quote_list': quote_list,
+            'quote_list_simple': quote_list_simple,
         },
     )
 
@@ -165,7 +191,8 @@ class QuoteCreate(CreateView):
         quote.owner = self.request.user
         quote.save()
         
-        #current implementation will not work using save_m2m() 
+        #unable to actually save tags on entry (prompt exists but QuoteTaggings will not save)
+        #tried using save_m2m(), but current implementation will not work using save_m2m() 
         #because of the intermediary model (google it)
         #saving this for later, because we may be onto something ->
         #try combining this solution: https://stackoverflow.com/a/10249376/670768
