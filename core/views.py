@@ -18,6 +18,8 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 
+import xml.etree.ElementTree as ET
+
 
 def index(request):
     #return HttpResponse("Nine Worlds Deep")
@@ -216,3 +218,36 @@ class QuoteDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         """ Only let the user access this page if they own the object being deleted"""
         return self.get_object().owner == self.request.user
+
+def xml_download(request):
+    #reference: https://stackoverflow.com/questions/45979406/serve-dynamically-generated-xml-file-to-download-in-django-with-character-encodi
+    response = HttpResponse(get_xml(request), content_type="application/xml")
+    response['Content-Disposition'] = 'inline; filename=myfile.xml'
+    return response
+
+def get_xml(request):
+
+    nwd = ET.Element("nwd")
+    
+    if request.user.is_authenticated:
+        #create doc here 
+        archivist_subset = ET.SubElement(nwd, "archivistSubset")
+        
+        for source in Source.objects.all():
+
+            source = ET.SubElement(archivist_subset, 
+                                   "source", 
+                                   type=source.source_type.name,
+                                   author=source.author,
+                                   director=source.director,
+                                   title=source.title,
+                                   year=source.year,
+                                   url=source.url,
+                                   retrievalDate=source.retrieval_date,
+                                   tag=source.source_tag)
+
+    else:
+        msg = ET.SubElement(nwd, "msg", value="user not authenticated")
+
+    xml_string = ET.tostring(nwd, 'utf-8')
+    return xml_string.decode('utf-8')
