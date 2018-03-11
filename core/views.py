@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 # from .models import Fragment, Document, Quote, QuoteAccessLogEntry
-from .models import Fragment, Document, Quote, SourceType, Source, MediaTag, QuoteTagging
+from .models import Fragment, Document, Quote, SourceType, Source, MediaTag, QuoteTagging, SourceExcerpt
 from .forms import QuoteForm
 from django.contrib.auth.models import User
 
@@ -231,20 +231,29 @@ def get_xml(request):
     
     if request.user.is_authenticated:
         #create doc here 
-        archivist_subset = ET.SubElement(nwd, "archivistSubset")
+        archivist_subset_element = ET.SubElement(nwd, "archivistSubset")
         
         for source in Source.objects.all():
 
-            source = ET.SubElement(archivist_subset, 
-                                   "source", 
-                                   type=source.source_type.name,
-                                   author=source.author,
-                                   director=source.director,
-                                   title=source.title,
-                                   year=source.year,
-                                   url=source.url,
-                                   retrievalDate=source.retrieval_date,
-                                   tag=source.source_tag)
+            source_element = ET.SubElement(archivist_subset_element, 
+                                           "source", 
+                                           type=source.source_type.name,
+                                           author=source.author,
+                                           director=source.director,
+                                           title=source.title,
+                                           year=source.year,
+                                           url=source.url,
+                                           retrievalDate=source.retrieval_date,
+                                           tag=source.source_tag)
+
+            for quote in Quote.objects.filter(source=source):
+
+                source_excerpt_element = ET.SubElement(source_element,
+                                                       "sourceExcerpt")
+
+                source_excerpt_value_element = ET.SubElement(source_excerpt_element,
+                                                             "sourceExcerptValue").text=quote.text
+
 
     else:
         msg = ET.SubElement(nwd, "msg", value="user not authenticated")
