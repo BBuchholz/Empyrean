@@ -254,6 +254,26 @@ def get_xml(request):
                 source_excerpt_value_element = ET.SubElement(source_excerpt_element,
                                                              "sourceExcerptValue").text=quote.text
 
+                for quote_tagging in QuoteTagging.objects.filter(quote=quote):
+
+                    tagged_at_time = quote_tagging.tagged_at
+                    untagged_at_time = quote_tagging.untagged_at
+
+                    tagged_at_string = ""
+                    untagged_at_string = ""
+
+                    if tagged_at_time:
+                        tagged_at_string = tagged_at_time.strftime('%Y-%m-%d %H:%M:%S')
+
+                    if untagged_at_time:
+                        untagged_at_string = untagged_at_time.strftime('%Y-%m-%d %H:%M:%S')
+
+                    tag_element = ET.SubElement(source_excerpt_element,
+                                                "tag",
+                                                tagValue=quote_tagging.tag.tag,
+                                                taggedAt=tagged_at_string,
+                                                untaggedAt=untagged_at_string)
+
 
     else:
         msg = ET.SubElement(nwd, "msg", value="user not authenticated")
