@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^quotes/(?P<pk>\d+)$', core.views.QuoteDetailView.as_view(), name='quote-detail'), #need to check ownership permissions, etc.
     url(r'^quotes/create/$', core.views.QuoteCreate.as_view(), name='quote-create'),
     url(r'^xml/download/$', core.views.xml_download, name='xml-download'),
+    url(r'^xml/upload/$', core.views.xml_upload, name='xml-upload'),
     # url(r'^quotes/create/$', core.views.quote_entry, name='quote-create'),
     url(r'^quotes/(?P<pk>\d+)/update/$', core.views.QuoteUpdate.as_view(), name='quote-update'),
     url(r'^quotes/(?P<pk>\d+)/delete/$', core.views.QuoteDelete.as_view(), name='quote-delete'),

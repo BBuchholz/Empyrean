@@ -7,8 +7,6 @@
 <p>This is the index template which extends our base template...</p>
 
 <ul>
-	<li><strong>Fragments:</strong> {{ num_frags }}</li>
-	<li><strong>Documents:</strong> {{ num_docs }}</li>
 	<li><strong>Quotes:</strong> {{ num_quotes }}</li>
 	<li><strong>Users:</strong> {{ num_users }}</li>
 </ul>
@@ -23,6 +21,8 @@ You have visited this page {{ num_visits }}
 <p><a href="{% url 'quote-create' %}">Add Quote</a></p>
 
 <p><a href="{% url 'xml-download' %}">Download XML</a></p>
+
+<p><a href="{% url 'xml-upload' %}">Upload XML</a></p>
 
 {% endif %}
 

@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Fragment, Document, Quote, SourceType, Source, MediaTag, QuoteTagging, SourceExcerpt
 from .forms import QuoteForm
 from django.contrib.auth.models import User
+from django import forms
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -219,10 +220,15 @@ class QuoteDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         """ Only let the user access this page if they own the object being deleted"""
         return self.get_object().owner == self.request.user
 
+
 def xml_download(request):
     #reference: https://stackoverflow.com/questions/45979406/serve-dynamically-generated-xml-file-to-download-in-django-with-character-encodi
     response = HttpResponse(get_xml(request), content_type="application/xml")
-    response['Content-Disposition'] = 'inline; filename=myfile.xml'
+    #response['Content-Disposition'] = 'inline; filename=myfile.xml'
+    now = datetime.now()
+    nwd_timestamp = now.strftime('%Y-%m-%d_%H-%M-%S')
+    filename = 'nwd_' + nwd_timestamp + '.xml'
+    response['Content-Disposition'] = 'attachment; filename=' + filename
     return response
 
 def get_xml(request):
@@ -280,3 +286,110 @@ def get_xml(request):
 
     xml_string = ET.tostring(nwd, 'utf-8')
     return xml_string.decode('utf-8')
+
+
+def xml_upload(request):
+    #if request.method == 'POST' and request.FILES['file']:
+    if request.method == 'POST':
+        
+        if not 'file' in request.FILES:
+            return render(request, 'core/xml_upload.html', {
+                'xml_upload_processed_message': 'choose a file for upload'
+            })  
+
+        file = request.FILES['file']
+        context = process_xml_upload(request)
+        return render(request, 'core/xml_upload.html', context)
+
+    return render(request, 'core/xml_upload.html')
+
+def process_xml_upload(request):
+    file = request.FILES['file']
+    uploaded_file_name = file.name
+
+    sources_processed = 0
+    source_location_subset_entries_processed = 0
+    source_excerpts_processed = 0
+    source_excerpt_annotations_processed = 0
+    tags_processed = 0
+
+    try:
+        tree = ET.parse(file)
+        root = tree.getroot()
+
+        for source in root.iter('source'):
+
+            source_type = root.get('type')
+            author = root.get('author')
+            director = root.get('director')
+            title = root.get('title')
+            year = root.get('year')
+            url = root.get('url')
+            retrieval_date = root.get('retrievalDate')
+            tag = root.get('tag')
+
+            for source_location_subset_entries in source.findall('sourceLocationSubsetEntry'):
+
+                location = source_location_subset_entry.get('location')
+                location_subset = source_location_subset_entry.get('locationSubset')
+                location_subset_entry = source_location_subset_entry.get('locationSubsetEntry')
+                verified_present = source_location_subset_entry.get('verifiedPresent')
+                verified_missing = source_location_subset_entry.get('verifiedMissing')
+
+                source_location_subset_entries_processed += 1
+
+            for source_excerpt in source.findall('sourceExcerpt'):
+
+                source_excerpt_value = source_excerpt.find('sourceExcerptValue').text
+                pages = source_excerpt.get('pages')
+                begin_time = source_excerpt.get('beginTime')
+                end_time = source_excerpt.get('endTime')
+
+                for source_excerpt_annotation in source_excerpt.findall('SourceExcerptAnnotation'):
+
+                    source_excerpt_annotation_value = source_excerpt_annotation.find('SourceExcerptAnnotationValue')
+                    linked_at = source_excerpt_annotation.get('linkedAt')
+                    unlinked_at = source_excerpt_annotation.get('unlinkedAt')
+
+                    source_excerpt_annotations_processed += 1
+
+                for tag in source_excerpt.findall('tag'):
+
+                    tag_value = tag.get('tagValue')
+                    tagged_at = tag.get('taggedAt')
+                    untagged_at = tag.get('untaggedAt')                    
+
+                    tags_processed += 1
+
+                source_excerpts_processed += 1
+
+            sources_processed += 1
+
+
+        processed_message = "successfully processed uploaded XML."
+
+    except:
+
+        processed_message = "unexpected error processing xml... aborted."
+
+    #build strings for processed statistics to return
+    if sources_processed > 0:
+        sources_processed_string = str(sources_processed) + " sources"
+    if source_location_subset_entries_processed > 0:
+        source_location_subset_entries_processed_string = str(source_location_subset_entries_processed) + " source location subset entries"
+    if source_excerpts_processed > 0:
+        source_excerpts_processed_string = str(source_excerpts_processed) + " source excerpts"
+    if source_excerpt_annotations_processed > 0:
+        source_excerpt_annotations_processed_string = str(source_excerpt_annotations_processed) + " source excerpt annotations"
+    if tags_processed > 0:
+        tags_processed_string = str(tags_processed) + " tags"
+
+
+    return {'uploaded_file_name': uploaded_file_name,
+            'xml_upload_processed_message': processed_message,
+            'sources_processed': sources_processed,
+            'source_location_subset_entries_processed': source_location_subset_entries_processed,
+            'source_excerpts_processed': source_excerpts_processed,
+            'source_excerpt_annotations_processed': source_excerpt_annotations_processed,
+            'tags_processed': tags_processed
+           }

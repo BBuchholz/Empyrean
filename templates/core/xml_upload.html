@@ -1,0 +1,39 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file">
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if uploaded_file_name %}
+    <p>File uploaded: {{ uploaded_file_name }}</p>
+  {% endif %}
+
+  {% if xml_upload_processed_message %}
+  	<p>Xml Upload Processed: {{ xml_upload_processed_message }}</p>
+  {% endif %}
+
+  {% if sources_processed %} 
+    <p>Sources Processed: {{ sources_processed }}</p>
+  {% endif %}
+
+  {% if source_location_subset_entries_processed %} 
+    <p>Source Location Subset Entries Processed: {{ source_location_subset_entries_processed }}</p>
+  {% endif %}
+  
+  {% if source_excerpts_processed %} 
+    <p>Source Excerpts Processed: {{ source_excerpts_processed }}</p>
+  {% endif %}
+  
+  {% if source_excerpt_annotations_processed %} 
+    <p>Source Excerpt Annotations Processed: {{ source_excerpt_annotations_processed }}</p>
+  {% endif %}
+  
+  {% if tags_processed %} 
+    <p>Tags Processed: {{ tags_processed }}</p>
+  {% endif %}
+  
+  {% endblock %}
