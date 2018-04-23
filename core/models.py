@@ -106,6 +106,9 @@ class SourceExcerptTagging(models.Model):
     untagged_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('excerpt', 'tag',)
 
 class Quote(models.Model):
     text = models.TextField()
@@ -140,5 +143,8 @@ class QuoteTagging(models.Model):
     untagged_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('quote', 'tag',)
 
 

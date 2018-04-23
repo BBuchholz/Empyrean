@@ -11,11 +11,13 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse
 from django.views import generic
+from django.utils import timezone
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, F
 import random
 from datetime import datetime
+import pytz
 
 from django.contrib.auth.decorators import login_required
 
@@ -89,7 +91,7 @@ def index(request):
 
 
     for quote in quote_list:
-        quote.last_accessed = datetime.now()
+        quote.last_accessed = timezone.now()
         quote.save()
         quote_text = quote.text
         
@@ -97,15 +99,32 @@ def index(request):
             quote_source_text = str(quote.source)
         else:
             quote_source_text = "[no source found]"
-       
+
+
+        
+
         quote_tags_values_list = quote.tags.values_list('tag', flat=True)
 
+        # ################### this isn't working as we hoped, copied from https://stackoverflow.com/a/12380982/670768 but can't get it to filter.
+        # ################### trying to filter out where untagged...
+        # quote_tags_values_list = QuoteTagging.objects.filter(tagged_at__gte=F('untagged_at'), quote=quote).values_list('tag', flat=True)
+
         if len(quote_tags_values_list) < 1:
-            quote_tagging = QuoteTagging(quote=quote, tag=media_tag_needs_tagging, tagged_at=datetime.now())
+            # quote_tagging = QuoteTagging(quote=quote, tag=media_tag_needs_tagging, tagged_at=timezone.now())
+            # quote_tagging.save()
+            # quote_tagging = QuoteTagging(quote=quote, tag=media_tag_empyrean_system_tagged, tagged_at=timezone.now())
+            # quote_tagging.save()
+            # quote_tags_values_list = quote.tags.values_list('tag', flat=True)
+            
+            quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_needs_tagging)
+            quote_tagging.tagged_at=timezone.now()
             quote_tagging.save()
-            quote_tagging = QuoteTagging(quote=quote, tag=media_tag_empyrean_system_tagged, tagged_at=datetime.now())
+
+            quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_empyrean_system_tagged)
+            quote_tagging.tagged_at=timezone.now()
             quote_tagging.save()
-            quote_tags_values_list = quote.tags.values_list('tag', flat=True)
+
+            quote_tags_values_list = quote.tags.values_list('tag', flat=True)            
 
         if len(quote_tags_values_list) > 0:
             quote_tag_string = ", ".join(quote_tags_values_list)
@@ -225,7 +244,7 @@ def xml_download(request):
     #reference: https://stackoverflow.com/questions/45979406/serve-dynamically-generated-xml-file-to-download-in-django-with-character-encodi
     response = HttpResponse(get_xml(request), content_type="application/xml")
     #response['Content-Disposition'] = 'inline; filename=myfile.xml'
-    now = datetime.now()
+    now = timezone.now()
     nwd_timestamp = now.strftime('%Y-%m-%d_%H-%M-%S')
     filename = 'nwd_' + nwd_timestamp + '.xml'
     response['Content-Disposition'] = 'attachment; filename=' + filename
@@ -297,6 +316,11 @@ def xml_upload(request):
                 'xml_upload_processed_message': 'choose a file for upload'
             })  
 
+        if not request.user.is_authenticated:
+            return render(request, 'core/xml_upload.html', {
+                'xml_upload_processed_message': 'must be logged in to upload xml'
+            })  
+
         file = request.FILES['file']
         context = process_xml_upload(request)
         return render(request, 'core/xml_upload.html', context)
@@ -319,14 +343,29 @@ def process_xml_upload(request):
 
         for source in root.iter('source'):
 
-            source_type = root.get('type')
-            author = root.get('author')
-            director = root.get('director')
-            title = root.get('title')
-            year = root.get('year')
-            url = root.get('url')
-            retrieval_date = root.get('retrievalDate')
-            tag = root.get('tag')
+            source_type_value = source.get('type')
+            author = source.get('author')
+            director = source.get('director')
+            title = source.get('title')
+            year = source.get('year')
+            url = source.get('url')
+            retrieval_date = source.get('retrievalDate')
+            source_tag = source.get('tag')
+
+            source_type, source_type_created = SourceType.objects.get_or_create(
+                name=source_type_value,
+            )
+
+            source_object, created = Source.objects.get_or_create(
+                source_type = source_type,
+                author = author,
+                director = director,
+                title = title,
+                year = year,
+                url = url,
+                retrieval_date = retrieval_date,
+                source_tag = source_tag,
+            )
 
             for source_location_subset_entries in source.findall('sourceLocationSubsetEntry'):
 
@@ -335,6 +374,9 @@ def process_xml_upload(request):
                 location_subset_entry = source_location_subset_entry.get('locationSubsetEntry')
                 verified_present = source_location_subset_entry.get('verifiedPresent')
                 verified_missing = source_location_subset_entry.get('verifiedMissing')
+
+                # Empyrean V5 only storing source, source_excerpt(as Quote), and tags(as QuoteTagging)...
+                # values are still read here because V6 will store everything
 
                 source_location_subset_entries_processed += 1
 
@@ -345,11 +387,24 @@ def process_xml_upload(request):
                 begin_time = source_excerpt.get('beginTime')
                 end_time = source_excerpt.get('endTime')
 
+                quote_object, quote_created = Quote.objects.get_or_create(
+                    source=source_object,
+                    text=source_excerpt_value,
+                )
+
+                if quote_created:
+                    quote_object.public_accessible = False
+                    quote_object.owner = request.user
+                    quote_object.save()
+
                 for source_excerpt_annotation in source_excerpt.findall('SourceExcerptAnnotation'):
 
                     source_excerpt_annotation_value = source_excerpt_annotation.find('SourceExcerptAnnotationValue')
                     linked_at = source_excerpt_annotation.get('linkedAt')
                     unlinked_at = source_excerpt_annotation.get('unlinkedAt')
+
+                    # Empyrean V5 only storing source, source_excerpt(as Quote), and tags(as QuoteTagging)...
+                    # values are still read here because V6 will store everything
 
                     source_excerpt_annotations_processed += 1
 
@@ -358,6 +413,46 @@ def process_xml_upload(request):
                     tag_value = tag.get('tagValue')
                     tagged_at = tag.get('taggedAt')
                     untagged_at = tag.get('untaggedAt')                    
+
+                    tag_object, tag_created = MediaTag.objects.get_or_create(
+                        tag=tag_value,
+                    )
+
+                    quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(
+                        quote=quote_object, 
+                        tag=tag_object,
+                    )
+
+                    if quote_tagging_created:
+                        # set taggedAt
+                        quote_tagging.tagged_at= timezone.now()
+
+                    else:
+                        # set tagged_at and untagged_at to more recent of each   
+                        if tagged_at :
+                            xml_tagged_at_time = datetime.strptime(tagged_at, '%Y-%m-%d %H:%M:%S')
+                            # force timezone aware
+                            xml_tagged_at_time = pytz.utc.localize(xml_tagged_at_time)
+                            
+                            if quote_tagging.tagged_at is not None:
+                                current_tagged_at_time = quote_tagging.tagged_at
+                                quote_tagging.tagged_at = max(xml_tagged_at_time, current_tagged_at_time)
+                            else:
+                                quote_tagging.tagged_at = xml_tagged_at_time
+
+                        if untagged_at:
+                            xml_untagged_at_time = datetime.strptime(untagged_at, '%Y-%m-%d %H:%M:%S')
+                            # force timezone aware
+                            xml_untagged_at_time = pytz.utc.localize(xml_untagged_at_time)
+
+                            if quote_tagging.untagged_at is not None:
+                                current_untagged_at_time = quote_tagging.untagged_at
+                                quote_tagging.untagged_at = max(xml_untagged_at_time, current_untagged_at_time)
+                            else:
+                                quote_tagging.untagged_at = xml_untagged_at_time
+
+                    # either way, save the new timestamps
+                    quote_tagging.save()
 
                     tags_processed += 1
 
@@ -368,9 +463,9 @@ def process_xml_upload(request):
 
         processed_message = "successfully processed uploaded XML."
 
-    except:
+    except Exception as e:
 
-        processed_message = "unexpected error processing xml... aborted."
+        processed_message = "unexpected error processing xml [" + str(e) + "]... aborted."
 
     #build strings for processed statistics to return
     if sources_processed > 0:
@@ -393,3 +488,6 @@ def process_xml_upload(request):
             'source_excerpt_annotations_processed': source_excerpt_annotations_processed,
             'tags_processed': tags_processed
            }
+
+
+
