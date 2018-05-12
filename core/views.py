@@ -83,8 +83,14 @@ def index(request):
         # grab X publicly accessible quotes, select from most recent by id
         quote_queryset = Quote.objects.filter(public_accessible=True).order_by("last_accessed")[:num_quotes_to_retrieve]
 
-    # take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
-    quote_list = random.sample(list(quote_queryset), num_quotes_to_randomize)
+    if len(quote_queryset) > num_quotes_to_randomize:
+
+        # take retrieved quotes and randomize to grab Y quotes and add to variable random_quotes
+        quote_list = random.sample(list(quote_queryset), num_quotes_to_randomize)
+
+    else:
+
+        quote_list = quote_queryset
 
     # just passing a list of what we need from each object, instead of the whole object to the template
     quote_list_simple = []
@@ -101,35 +107,76 @@ def index(request):
             quote_source_text = "[no source found]"
 
 
-        
 
+        ######### working on alternative ###
+        ####################################
+        #
+        # old code, that (erroneously) includes untagged tag values, comment this out when code below is working
         quote_tags_values_list = quote.tags.values_list('tag', flat=True)
 
-        # ################### this isn't working as we hoped, copied from https://stackoverflow.com/a/12380982/670768 but can't get it to filter.
-        # ################### trying to filter out where untagged...
-        # quote_tags_values_list = QuoteTagging.objects.filter(tagged_at__gte=F('untagged_at'), quote=quote).values_list('tag', flat=True)
+        
+        ####################################
+        #
+        # new code (comment out above when working)
+        quote_tags_values = []
+
+        for quote_tagging in quote.quotetagging_set.all():
+
+            testing = False
+
+            if testing:
+
+                quote_tagged_at = str(quote_tagging.tagged_at)
+                quote_untagged_at = str(quote_tagging.untagged_at)
+                quote_tag_value = str(quote_tagging.tag.tag)
+
+                output_test = quote_tag_value + "-> tagged: "
+                output_test += quote_tagged_at + " untagged: "
+                output_test += quote_untagged_at
+                quote_tags_values.append(output_test)
+
+            else:
+
+                tagged_at = quote_tagging.tagged_at
+                untagged_at = quote_tagging.untagged_at
+
+                if untagged_at is not None:
+
+                    if (tagged_at is not None and
+                        tagged_at == max(tagged_at, untagged_at)):
+
+                        quote_tags_values.append(str(quote_tagging.tag.tag))
+
+                else:
+
+                    quote_tags_values.append(str(quote_tagging.tag.tag))
+
+
+        quote_tags_values_list = quote_tags_values
+
+        #
+        #
+        ####################################
+        ######### end of alternative work ###
+
 
         if len(quote_tags_values_list) < 1:
-            # quote_tagging = QuoteTagging(quote=quote, tag=media_tag_needs_tagging, tagged_at=timezone.now())
-            # quote_tagging.save()
-            # quote_tagging = QuoteTagging(quote=quote, tag=media_tag_empyrean_system_tagged, tagged_at=timezone.now())
-            # quote_tagging.save()
-            # quote_tags_values_list = quote.tags.values_list('tag', flat=True)
             
-            quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_needs_tagging)
-            quote_tagging.tagged_at=timezone.now()
-            quote_tagging.save()
+            # quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_needs_tagging)
+            # quote_tagging.tagged_at=timezone.now()
+            # quote_tagging.save()
 
-            quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_empyrean_system_tagged)
-            quote_tagging.tagged_at=timezone.now()
-            quote_tagging.save()
+            # quote_tagging, quote_tagging_created = QuoteTagging.objects.get_or_create(quote=quote, tag=media_tag_empyrean_system_tagged)
+            # quote_tagging.tagged_at=timezone.now()
+            # quote_tagging.save()
 
-            quote_tags_values_list = quote.tags.values_list('tag', flat=True)            
+            # quote_tags_values_list = quote.tags.values_list('tag', flat=True)      
+            pass      
 
         if len(quote_tags_values_list) > 0:
             quote_tag_string = ", ".join(quote_tags_values_list)
         else:
-            quote_tag_string = ", ".join('tags', 'not', 'found', 'here',)
+            quote_tag_string = ""
 
         quote_list_simple.append((quote_text, quote_source_text, quote_tag_string))
         

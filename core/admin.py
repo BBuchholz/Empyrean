@@ -31,7 +31,7 @@ class QuoteAdmin(admin.ModelAdmin):
 
 @admin.register(QuoteTagging)
 class QuoteTaggingAdmin(admin.ModelAdmin):
-    list_display = ('quote', 'tag')
+    list_display = ('quote', 'tag', 'tagged_at', 'untagged_at')
 
 
 
