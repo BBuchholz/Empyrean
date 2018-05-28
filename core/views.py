@@ -246,7 +246,7 @@ class QuotesPrivateForUserListView(LoginRequiredMixin, generic.ListView):
     """
     model = Quote
     template_name = 'core/quote_list_private_for_user.html'
-    paginate_by = 5
+    paginate_by = 20
 
     def get_queryset(self):
         return Quote.objects.filter(Q(owner=self.request.user)|Q(public_accessible=True)).order_by('-created_at')
