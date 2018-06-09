@@ -6,9 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  
 </head>
 <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
 
@@ -43,8 +44,8 @@
 
 <div class="jumbotron text-center">
   {% load static %}
-  <img class="img-responsive" src="{% static "nwd-tree-logo-nameplate.png" %}">       
-  <p>...[insert ecosystem blurb here]...</p> 
+  <img class="img-responsive" src="{% static "nwd-tree-logo-nameplate.png" %}"> 
+
   <form class="form-inline">
     <div class="input-group">
       <input type="text" class="form-control" size="50" placeholder="Quick thought..." required>
@@ -53,7 +54,31 @@
       </div>
     </div>
   </form>
+ 
+    <p>A Preface</p>
+  <div id="preface">  
+    <p>
+         In order to work with the TCT material, you will need to be well versed in both Chaos Magick principles and traditional High Magick systems.
+    </p>
+
+    <p>
+        Amateur efforts in either will prevent true utilization of these teachings.
+    </p>
+
+    <p>
+        For the Chaote without sufficient traditional experience will fail to grasp the full potential of an ordered and integrated system.
+    </p>
+
+    <p>
+        Likewise, the Traditionalist without a real understanding of Chaos principles will inevitably feel that too much liberty has been taken in our developments.
+    </p>
+    <p>
+        Only the practitioner who understands both the importance of an internally coherent system, as well as the necessity of modification and adaptation where appropriate, will have the potential to truly appreciate what we have done, and are doing...
+    </p> 
+  </div>
 </div>
+
+
 
 {% block content %}{% endblock %}
 

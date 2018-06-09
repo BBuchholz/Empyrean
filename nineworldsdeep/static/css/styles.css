@@ -139,3 +139,13 @@ footer .glyphicon {
 form {
   margin: 20px;
 }
+
+#preface {
+  margin: 0 auto;
+  width: 400px;
+}
+
+#preface p {
+  text-align: center;
+  font-size: 12px;
+}
